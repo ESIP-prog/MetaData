@@ -1,20 +1,23 @@
-:: Ğ¡ĞºÑ€Ğ¸Ğ¿Ñ‚ Ğ¾Ğ±Ğ½Ğ¾Ğ²Ğ»ĞµĞ½Ğ¸Ñ Ğ½Ğ¾Ğ¼ĞµÑ€Ğ° ÑĞ±Ğ¾Ñ€ĞºĞ¸
+:: Ñêğèïò îáíîâëåíèÿ íîìåğà ñáîğêè
 @echo off
-::set headerloc=%
 set headerloc=bn.h
 
 if exist %headerloc% (
-	if %1==check (
-		exit
-	)
-	FOR /F "tokens=1,2* delims=, " %%i in ('findstr /I "VERSION_BUILD" %headerloc%') do set bn=%%k
-	set /a newbn=(%bn% + 1)
-	if %newbn% == 10000 (
-		set newbn=0
-)
+goto increment
 ) else (
-    set newbn=0
+goto initialize
 )
+
+:initialize
+set newbn=0
+goto generate
+:increment
+FOR /F "tokens=1,2* delims=, " %%i in ('findstr /I "VERSION_BUILD" %headerloc%') do set bn=%%k
+set /a newbn=(%bn% + 1)
+if %newbn% == 10000 (
+	set newbn=0
+)
+:generate
 
 ::echo In file %headerloc%
 ::echo Old build number %bn%
@@ -28,3 +31,4 @@ echo.  >> %headerloc%
 echo #define VERSION_BUILD  %newbn% >> %headerloc%
 echo.  >> %headerloc%
 echo #endif /* METADATA_BN_H_ */ >> %headerloc%
+::pause
